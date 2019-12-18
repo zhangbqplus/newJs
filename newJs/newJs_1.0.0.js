@@ -1,1 +1,1 @@
-newJs={};
+var newJs={};
