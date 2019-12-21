@@ -1,4 +1,4 @@
-//欢迎使用newJs——事件封装库
+//欢迎使用newJs——函数封装库
 function newJs(){
 	var newJs = this;
 	//判断数据类型
@@ -11,18 +11,21 @@ function newJs(){
 	}
 	//获取节点id,或类   class .   id # 标签 < 获取选择器中第一个标签 $ 获取 选择器中的全部 @   不填时为name
 	newJs.$ = function(id){
-		  if (id.substring(0,1)==".") {
-			return document.getElementsByClassName(id.substring(1,id.length));
-		  }else if (id.substring(0,1)=="#") {
-			return document.getElementById(id.substring(1,id.length));
-		  }else if (id.substring(0,1)=="<") {
-			return document.getElementsByTagName(id.substring(1,id.length));
-		  }else if (id.substring(0,1)=="$") {
-			return document.querySelector(id.substring(1,id.length));
-		  }else if (id.substring(0,1)=="@") {
-			return document.querySelectorAll(id.substring(1,id.length));
+		  var a  = id.trim().replace(/\s+/g,"");
+		  var b  = a.substring(0,1).trim();
+		  var k = a.substring(1,a.length);
+		  if (b==".") {
+			return document.getElementsByClassName(k);
+		  }else if (b=="#") {
+			return document.getElementById(k);
+		  }else if (b=="<") {
+			return document.getElementsByTagName(k);
+		  }else if (b=="$") {
+			return document.querySelector(k);
+		  }else if (b=="@") {
+			return document.querySelectorAll(k);
 		  }else{
-			return document.getElementsByName(id.substring(1,id.length));
+			return document.getElementsByName(k);
 		  }
 		  /*
 		  1、通过id获取,可以交给一个变量保存（括号里写id名）
