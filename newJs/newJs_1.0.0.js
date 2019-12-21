@@ -1,14 +1,39 @@
 //欢迎使用newJs——事件封装库
 var newJs={};
-// 获取id,或类
+// 获取节点id,或类   class .   id # 标签 < 获取选择器中第一个标签 $ 获取 选择器中的全部 @   不填时为name
 newJs.$=function(id){
   if (id.substring(0,1)==".") {
     return document.getElementsByClassName(id.substring(1,id.length));
+  }else if (id.substring(0,1)=="#") {
+    return document.getElementById(id.substring(1,id.length));
+  }else if (id.substring(0,1)=="<") {
+    return document.getElementsByTagName(id.substring(1,id.length));
+  }else if (id.substring(0,1)=="$") {
+    return document.querySelector(id.substring(1,id.length));
+  }else if (id.substring(0,1)=="@") {
+    return document.querySelectorAll(id.substring(1,id.length));
+  }else{
+	return document.getElementsByName(id.substring(1,id.length));
   }
-  return document.getElementById(id);
+  /*
+  1、通过id获取,可以交给一个变量保存（括号里写id名）
+     let a = document.getElementById("box");
+     console.log(a);
+  2、通过class获取（获取到的是数组）
+     console.log(document.getElementsByClassName("1"));
+  3、通过标签名获取（获取到的是数组）
+     console.log(document.getElementsByTagName("div"));
+  4、通过name属性获取（获取到的是数组）
+     console.log(document.getElementsByName(2));
+	 html5获取节点方法
+  1、获取到的是满足选择器的第一个标签（括号里写css选择器）
+     console.log(document.querySelector(".box1>p"));
+  2、获取到的是数组（括号里写css选择器）
+     console.log(document.querySelectorAll(".box1>p"));
+	 */
 };
 //判断是电脑端还是手机端
-newJs.pcORmb=function(){
+newJs.pcMb=function(){
   var result;
   if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
     result='mb';
@@ -23,29 +48,4 @@ newJs.screenH=function(){
 };
 newJs.screenW=function(){
   return window.screen.width;
-};
-//添加newJs节点，并返回id下的所有内容
-newJs.setnewJs=function(id){
-  var newJs_Start=id.innerHTML.replace(/{{/g,"<newJs class='newJs'>");
-  id.innerHTML=newJs_Start;
-  var regS = new RegExp("}}","g");
-  var newJs_End=id.innerHTML.replace(regS,"</newJs>");
-  id.innerHTML=newJs_End;
-  return id.innerHTML;
-};
-// 隐藏所有newJs内容,并寻找是否具有数据绑定
-newJs.setDate=function(id){
-  var newJs=document.getElementsByClassName('newJs');
-  for (var i = 0; i < newJs.length; i++) {//遍历html具有数据绑定的数据
-    var newJs=newJs[i].innerText.split(".");//数据绑定结构拆分
-    for (var k = 0; k < Data.length; k++) {//遍历Data具有的数据
-      var dataK=Data[k]+'';//字符串处理
-      var data=dataK.split('=>');//Data结构拆分
-      if (newJs[0]==data[0]) {
-        console.log(dataK);
-      }
-
-    }
-  }
-  console.log(newJs);
 };
