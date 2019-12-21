@@ -7,7 +7,6 @@ function newJs(){
 	};
 	//是否存在构建函数
 	newJs.getTypeObj = function(k,t){
-		console.log(k instanceof t);
 		return k instanceof t;
 	}
 	//获取节点id,或类   class .   id # 标签 < 获取选择器中第一个标签 $ 获取 选择器中的全部 @   不填时为name
