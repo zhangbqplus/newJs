@@ -49,3 +49,10 @@ newJs.screenH=function(){
 newJs.screenW=function(){
   return window.screen.width;
 };
+//获取移动端信息
+newJs.osInf=function(){
+	var device_type = navigator.userAgent;//获取userAgent信息
+	var md = new MobileDetect(device_type);//初始化mobile-detect
+	var os = md.os();//获取系统
+	return os;
+}

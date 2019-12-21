@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>newJs 事件封装库UI</title>
+		<script src="../../newJs/newJs_1.0.0.js"></script>
+		<script src="../../newJs/newJs_ui_1.0.0.js"></script>
+	</head>
+	<body>
+		<!-- 滑动浮标 -->
+		<div id="InertiaBuoy" class="InertiaBuoy" >
+		  <div class="InertiaBuoyBox0">
+		    <div class="InertiaBuoyBox1">
+		      <div class="InertiaBuoyBox2"></div>
+		    </div>
+		  </div>
+		</div>
+	</body>
+	<style>
+		/* 滑动浮标样式 */
+		.InertiaBuoy {
+			/* 必填 */
+		    position: fixed;
+			opacity: 1;
+			transition: opacity 0.5s;
+			-moz-transition: opacity 0.5s;	/* Firefox 4 */
+			-webkit-transition: opacity 0.5s;	/* Safari 和 Chrome */
+			-o-transition: opacity 0.5s;
+			display: none;
+			/* 必填 */
+			background-color:rgba(73,138,255,0.6);
+		    line-height: 2.75rem;
+		    width: 4rem;
+		    height: 4rem;
+		    display: none;
+		    text-align: center;
+		    border-radius: 0.5rem;
+		    color: #fff;
+		    background-clip: padding-box;
+		    text-decoration: none;
+		    top: 14rem;
+		    line-height: 4rem;
+		    text-align: center;
+		    
+		}
+		.InertiaBuoyBox0{
+		  width: 3rem;
+		  height: 3rem;
+		  border-radius: 1.5rem;
+		  background-color: rgba(255,255,255,0.5);
+		  margin: 0.5rem 0 0 0.5rem;
+		  padding-top: 0.3rem;
+		}
+		.InertiaBuoyBox1{
+		  width: 2.4rem;
+		  height: 2.4rem;
+		  border-radius: 1.2rem;
+		  background-color: rgba(255,255,255,0.5);
+		  margin: 0 auto;
+		  padding-top: 0.3rem;
+		}
+		.InertiaBuoyBox2{
+		  width: 1.8rem;
+		  height: 1.8rem;
+		  border-radius: 0.9rem;
+		  background-color: rgba(255,255,255,1);
+		  margin: 0 auto;
+		}
+	</style>
+	<script>
+		var newJs_ui;
+		var newJs;
+		console.log(newJs.$('#InertiaBuoy'));
+		newJs_ui.Buoy(newJs.$('#InertiaBuoy'));
+	</script>
+</html>
