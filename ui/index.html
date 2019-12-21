@@ -4,32 +4,39 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>newJs 事件封装库UI</title>
-		<script src="../newJs/newJs_1.0.0.js"></script>
+		<title>newjS 事件封装库UI</title>
+		<script src="../newjS/newjS_1.0.0.js"></script>
 		<script src="config.js"></script>
-		<script src="../newJs/test.js"></script>
+		<script src="../newjS/test.js"></script>
 	</head>
 	<body>
-		<div id="myApp"></div>
+		<div id="myApp" class="aaa">
+			<p>1111</p>
+			<p>3333</p>
+			<p>4444</p>
+		</div>
+		<div class="aaa">
+			<p>5555</p>
+			<p>6666</p>
+			<p>7777</p>
+		</div>
 	</body>
 	<script type="text/javascript">
 		// var p = new Person('1','ff');
-		var newJs = new newJs();
-		console.log(newJs.$("#myApp"));
+		var newjs = new newJs();
+		console.log(newjs.$("#myApp"));
 		function a(){
 			console.log(11111)
 		}
+		var cc = new a();
 		var b = 1;
 		var c = true;
 		var d = undefined;
-		console.log(newJs.getType(b));
-		console.log(newJs.getType(c));
-		console.log(newJs.getType(d));
-		console.log(newJs.getType(newJs));
-		// console.log(newJs.getTypeObj(newJs,newJs));
-		newJs.getType(c);
-		newJs.getType(d);
-		newJs.getType(b);
-		newJs.getType(newJs);
+		// console.log(newjS.getType(b));
+		// console.log(newjS.getType(c));
+		// console.log(newjS.getType(d));
+		// console.log(newjS.getType(newjS));
+		// console.log(newjS instanceof newJs);
+		// console.log(newjS.getTypeObj(newjS,newJs));
 	</script>
 </html>
