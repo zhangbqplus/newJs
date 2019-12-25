@@ -108,7 +108,6 @@ function newJs(){
 		new_Js_t.funContent = 'new_Js_t.fun = function(){' + new_Js_t.data + new_Js_t.method + new_Js_t.retrnData + '}';
 		eval(new_Js_t.funContent);
 		new_Js_t.getRetrn = new_Js_t.fun();
-		console.log(new_Js_t.getRetrn);
 		for (var i = 0; i < new_Js_t.newJsLabel.length; i++) {
 			var bingHtml = {};
 			bingHtml.data = '';
@@ -120,25 +119,8 @@ function newJs(){
 			bingHtml.funContent ='bingHtml.fun = function(){' +
 								bingHtml.data + bingHtml.getRetrn +
 								'};';
-			console.log(bingHtml.funContent)
 			eval(bingHtml.funContent);
 			bingHtml.getRetrn = bingHtml.fun();
-			// bingHtml.retrnData =
-			// 'bingHtml.retrnDataC = function(){' +
-			// 'for(var key in new_Js_t.newJs_bind_opt_data){' +
-			// 	'new_Js_t.newJs_bind_opt_data[key] = eval(key);' +
-			// '};' +
-			// '};new_Js_t.retrnDataC(); return new_Js_t.newJs_bind_opt_data;';
-			// new_Js_t.funContent = 'new_Js_t.fun = function(){' + new_Js_t.data + new_Js_t.method + new_Js_t.retrnData + '}';
-			// eval(new_Js_t.funContent);
-			// bingHtml.retrnData =
-			// 'var retrnData = function(){' +
-			// 'for(var key in newJs_bind_opt_data){' +
-			// 	'newJs_bind_opt_data[key] = eval(key);' +
-			// '};' +
-			// '};retrnData(); return newJs_bind_opt_data;';
-			// bingHtml.funContent = 'bingHtml..fun = function(){' + bingHtml.data + bingHtml.method + new_Js_t.retrnData + '}';
-			// var fun =JSON.stringify(t.getRetrn) + t.newJsLabel[i].innerHTML;
 			new_Js_t.newJsLabel[i].innerHTML = bingHtml.getRetrn;
 		}
 	};
