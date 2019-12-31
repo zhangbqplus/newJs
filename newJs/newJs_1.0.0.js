@@ -85,10 +85,11 @@ function newJs(){
 		// var os = md.os();//获取系统
 		return arr;
 	};
-	//数据的双向绑定单向绑定
+	//数据的单向/双向绑定
 	newJs.bind = function(opt){
-		var new_Js_k = opt, new_Js_t = {};
-		new_Js_t.id = document.getElementById(opt.id);
+		var that = this;
+		var new_Js_t = {};
+		new_Js_t.id = document.getElementById(opt.id);//id
 		new_Js_t.content = new_Js_t.id.innerHTML.replace(/{{/g,'<newJs>').replace(/}}/g,'</newJs>');
 		new_Js_t.id.innerHTML = new_Js_t.content;
 		new_Js_t.newJsLabel = new_Js_t.id.getElementsByTagName('newJs');
@@ -107,7 +108,29 @@ function newJs(){
 		'};new_Js_t.retrnDataC(); return new_Js_t.newJs_bind_opt_data;';
 		new_Js_t.funContent = 'new_Js_t.fun = function(){' + new_Js_t.data + new_Js_t.method + new_Js_t.retrnData + '}';
 		eval(new_Js_t.funContent);
-		new_Js_t.getRetrn = new_Js_t.fun();
+		new_Js_t.getRetrn = new_Js_t.fun();//处理后数据
+		//双向绑定
+		{
+			var new_Js_k = {};
+			new_Js_k.id = new_Js_t.id.children;
+			for (let i = 0; i < new_Js_k.id.length; i++) {
+				if(new_Js_k.id[i].attributes.length > 0){
+					new_Js_k.idOne = new_Js_k.id[i].attributes;
+					for (let t = 0; t < new_Js_k.idOne.length; t++) {
+						let it = new_Js_k.idOne[t];
+						let localName = it.localName.toString();//属性名
+						let value = it.value.toString();//属性值
+						let a = localName.substring(0,1).trim();
+						var b = localName.substring(1,localName.length).trim();
+						if(a == ':'){
+							new_Js_k.id[i].removeAttribute(localName);
+							new_Js_k.id[i].setAttribute(b,new_Js_t.getRetrn[value]);
+						}
+					}
+				}
+			}
+		}
+		//单向绑定内容
 		for (var i = 0; i < new_Js_t.newJsLabel.length; i++) {
 			var bingHtml = {};
 			bingHtml.data = '';
@@ -123,6 +146,7 @@ function newJs(){
 			bingHtml.getRetrn = bingHtml.fun();
 			new_Js_t.newJsLabel[i].innerHTML = bingHtml.getRetrn;
 		}
+		
 	};
 }
 //获取手机系统信息  https://github.com/hgoebl/mobile-detect.js/

@@ -9,8 +9,6 @@
 var newJs = new newJs();
 ```
 
-
-
 ##### newJs.$
 
 class .   id # 标签 < 获取选择器中第一个标签 $ 获取 选择器中的全部 @   不填时为name
