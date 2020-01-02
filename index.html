@@ -8,19 +8,19 @@
 	</head>
 	<body>
 		<div id="myApp" class="aaa" :value="ahfga">
-			<p>{{c}}</p>
+			<p @onclick="add()">{{c}}</p>
 			<p>3333
-			<div>{{a + a}} hfahfa</div>
+				<div>{{a + a}} hfahfa</div>
 			</p>
 			<p>4444</p>
-			<p>{{a}}</p>
+			<p @onclick="sub()" >rghffgfggfg{{a}}</p>
 			<p>{{b}}</p>
 			<p>{{a + b + c == c ? 'yes' : 'no'}}</p>
-			<p>{{c == 10 ? 999 : 212 }}</p>
+			<p>{{c == 105 ? 999 : 212 }}</p>
 			<p>{{c == 10 ? 10000 : 222 }}</p>
-			<input type="" name="" :value="c" @onchange="" onclick="aaaaaaa()" />
+			<input type="" name="" [value]="c" @keydown="add()" @onchange="add()" onclick="add()" />
 		</div>
-		
+
 		<input id="aa" type="text" />
 		<span id="bb">{{test}}</span>
 		<div class="aaa">
@@ -33,48 +33,63 @@
 	<script type="text/javascript">
 		var newjs = new newJs();
 		var c = {
-			b:1
+			b: 1
 		}
-		function aaaaaaa(){
+
+		function add() {
 			console.log(1111111111)
 		}
-		 var obj = {};
-		    Object.defineProperty(obj,'test',{
-		      set(val) {
-		        document.querySelector('#aa').value = val;
-		        document.querySelector('#bb').innerHTML = val;
-		      }
-		    })
-		    console.log(document.querySelector('#aa'));
-		    document.querySelector('#aa').onkeyup = function(e) {
-		      obj.test = e.target.value;
+		var obj = {};
+		Object.defineProperty(obj, 'test', {
+			set(val) {
+				document.querySelector('#aa').value = val;
+				document.querySelector('#bb').innerHTML = val;
 			}
+		})
+		console.log(document.querySelector('#aa'));
+		document.querySelector('#aa').onkeyup = function(e) {
+			obj.test = e.target.value;
+		}
 		// document.querySelector(Selector).attributes
 		//数据流的绑定
-		newjs.bind(
-			{
-				id:'myApp',//挂载点
-				data:{//数据
-					a:newjs.osInf()[0],
-					b:c.b ? c.b : '1',
-					ddd:{
-						a : '1'
-					},
-					c:10
+		newjs.bind({
+			id: 'myApp', //挂载点
+			data: { //数据
+				a: newjs.osInf()[0],
+				b: c.b ? c.b : '1',
+				ddd: {
+					a: '1'
 				},
-				method:function () {//方法
-					function nihao(){
-						c = 100;
-					}
-					function aaa(){
-						c = c + 1;
-					}
-					nihao();
+				c: 10
+			},
+			onloud: function() { //钩子1，计入即执行
+				nihao();
+			},
+			method: function() { //方法
+				// function onloud() { //钩子1，计入即执行
+
+				// }
+
+				function nihao() {
+					c = 100;
 				}
-			}
-		)
+
+				function aaa() {
+					c = c + 1;
+				}
+
+				function add() {
+					c = ++ c;
+					console.log(c);
+				}
+				function sub() {
+					c = -- c;
+					console.log(c);
+				}
+			},
+		})
 		//定时器
-		newjs.timeIntervalDate(function (){
+		newjs.timeIntervalDate(function() {
 			// newjs.bind(
 			// 	{
 			// 		id:'myApp',
@@ -92,8 +107,8 @@
 			// )
 		});
 		console.log(newjs);
-		console.log(newjs.$("#myApp").children);//获取节点 attributes
-		console.log(newjs.$(".aaa")[0].attributes);//获取节点 attributes
-		console.log(newjs.osInf());//系统信息
+		console.log(newjs.$("#myApp").children); //获取节点 attributes
+		console.log(newjs.$(".aaa")[0].attributes); //获取节点 attributes
+		console.log(newjs.osInf()); //系统信息
 	</script>
 </html>
