@@ -103,7 +103,6 @@ function newJs() {
 			'catch(err){ let onloud = ' + opt.onloud.toString() + '; onloud(); }' //onloud 钩子被载入,并执行
 			+
 			method.toString().substring(method.toString().length - 1) + '; methodString();';
-		// console.log(method.toString().substring(method.toString().length-1));
 		let returnDataFun =
 			'returnDataFun = function(){' +
 			'for(var key in dataS){' +
@@ -113,31 +112,6 @@ function newJs() {
 		let funAll = 'funAll = function(){' + dataString + methodString + returnDataFun + '}';
 		eval(funAll);
 		data = funAll();
-		//绑定事件
-		// let ele_children = ele.children;
-		// for (let i = 0; i < ele_children.length; i++) {
-		// 	if (ele_children[i].attributes.length > 0) {
-		// 		for (let t = 0; t < ele_children[i].attributes.length; t++) {
-		// 			let it = ele_children[i].attributes[t];
-		// 			let localName = it.localName.toString(); //属性名
-		// 			let value = it.value.toString(); //属性值
-		// 			let a = localName.substring(0, 1).trim();
-		// 			var b = localName.substring(1, localName.length).trim();
-		// 			if (a == '@') {
-		// 				// console.log(a + "--------" + b )
-		// 				let setValue = 'window.runMoth ("' + value + '")';
-		// 				ele_children[i].setAttribute(b, setValue);
-		// 			}
-		// 			if(a == '['){
-		// 				ele_children[i].setAttribute(b.substring(0, b.length - 1).trim(),'');
-		// 			}
-		// 			// if(a == ':'){
-		// 			// 	new_Js_k.id[i].removeAttribute(localName);
-		// 			// 	new_Js_k.id[i].setAttribute(b,new_Js_t.getRetrn[value]);
-		// 			// }
-		// 		}
-		// 	}
-		// }
 		window.newJs_bindCache_data = data; //全局数据变量
 		window.newJs_bindCache_dataPro = {};//前置数据变量
 		window.newJs_bindCache_method = method.toString(); //全局方法全局变量
@@ -171,24 +145,6 @@ function newJs() {
 		for (let i = 0; i < ele_newJs.length; i++) {
 			window.viewHtml[window.viewHtml.length] = ele_newJs[i].innerHTML;
 		}
-		//存储试图内双向绑定数据
-		// {
-		// 	window.doubleData = function(opt) { //全局触发事件
-		// 		let data = window.newJs_bindCache_data;
-		// 		let method = window.newJs_bindCache_method;
-		// 		let dataString = ''; //data字符串化
-		// 		for (var key in data) {
-		// 			dataString = dataString + 'let ' + key + '=' + JSON.stringify(data[key]) + ';'
-		// 		};
-		// 		dataString = dataString + "let dataS =" + JSON.stringify(data) + ';';
-		// 		let returnDataFun =
-		// 			'return ' + opt +';';
-		// 		let funAll = 'funAll = function(){' + dataString + returnDataFun + '}';
-		// 		eval(funAll);
-		// 		data = funAll();
-		// 		window.newJs_bindCache_data = data; //将数据存入全局变量
-		// 	}
-		// }
 		//界面
 		window.dataView = function(){ //全局页面刷新事件
 			let data = window.newJs_bindCache_data;
