@@ -25,7 +25,7 @@ console.log(newJs.$（"@.box1>p");
 
 ##### newJs.screenW
 
-屏幕高度
+屏幕宽度
 
 ##### newJs.pcMb
 
