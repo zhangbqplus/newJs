@@ -169,14 +169,46 @@ function newJs() {
 				if (ele_children[i].attributes.length > 0) {
 					for (let t = 0; t < ele_children[i].attributes.length; t++) {
 						let it = ele_children[i].attributes[t];
-						let localName = it.localName.toString(); //属性名
-						let value = it.value.toString(); //属性值
+						let localName = it.localName.toString().trim(); //属性名
+						let value = it.value.toString().trim(); //属性值
 						let a = localName.substring(0, 1).trim();
 						var b = localName.substring(1, localName.length).trim();
 						if (a == '@') {
-							// console.log(a + "--------" + b )
 							let setValue = 'window.runMoth ("' + value + '")';
 							ele_children[i].setAttribute(b, setValue);
+						}
+						if (a == ':') {
+							dataString = '';
+							for (var key in data) {
+								dataString = dataString + 'let ' + key + '=' + JSON.stringify(data[key]) + ';'
+							};
+							//返回值处理
+							let getRetrn = '';
+							let getReturnValue = ''; 
+							if (value.substring(0, 1).trim() == '$') {
+								let valueArry = value.substring(1, value.length).trim().split(',');
+								if (valueArry.length > 0) {
+									getReturnValue = 'let dataS = "" ; ';
+									for (var z = 0; z < valueArry.length; z++) {
+										if (valueArry[z].trim().length > 0 && valueArry[z].split(':').length > 1) {
+											getReturnValue = getReturnValue 
+											+ 'if('+ valueArry[z].split(':')[1] +'){'
+											+ 'dataS = dataS + " " + ' + valueArry[z].split(':')[0]
+											+ '}';
+										}else if(valueArry[z].split(':') == 1){
+											getReturnValue = getReturnValue + 'dataS = dataS + " " + ' + valueArry[z].split(':')[0];
+										}
+									}
+								}
+								getRetrn = 'return dataS';
+							}else {
+								getRetrn = 'return ' + value;
+							}
+							let getDataFun = 'getDataFun = function(){' +
+								dataString + getReturnValue + getRetrn +
+								'};';
+								eval(getDataFun);
+							ele_children[i].setAttribute(b, getDataFun());
 						}
 						if (a == '[') {
 							let returnData = 'return ' + value;
