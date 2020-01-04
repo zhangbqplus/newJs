@@ -112,8 +112,9 @@ function newJs() {
 		let funAll = 'funAll = function(){' + dataString + methodString + returnDataFun + '}';
 		eval(funAll);
 		data = funAll();
-		window.newJs_bindCache_data = data; //全局数据变量
-		window.newJs_bindCache_dataPro = {};//前置数据变量
+		window.newJs_bindCache_data = data; //全局数据变量 (现在数据)
+		window.newJs_bindCache_dataPro = {}; //前置数据变量 (过去数据)
+		window.newJs_bindCache_dataNext = {}; //未来数据	(未来数据)
 		window.newJs_bindCache_method = method.toString(); //全局方法全局变量
 		//属性事件
 		window.runMoth = function(opt) { //全局触发事件
@@ -138,15 +139,16 @@ function newJs() {
 			eval(funAll);
 			data = funAll();
 			window.newJs_bindCache_data = data; //将数据存入全局变量
+			window.newJs_bindCache_dataNext = data; //预存未来数据
 		}
 		//存储视图innerHTML内数据
 		let ele_newJs = ele.getElementsByTagName('newJs');
-		window.viewHtml = []//试图数据结构存储
+		window.viewHtml = [] //试图数据结构存储
 		for (let i = 0; i < ele_newJs.length; i++) {
 			window.viewHtml[window.viewHtml.length] = ele_newJs[i].innerHTML;
 		}
 		//界面
-		window.dataView = function(){ //全局页面刷新事件
+		window.dataView = function() { //全局页面刷新事件
 			let data = window.newJs_bindCache_data;
 			let ele_newJs = ele.getElementsByTagName('newJs');
 			let dataString = ''; //data字符串化
@@ -157,8 +159,8 @@ function newJs() {
 			for (let i = 0; i < ele_newJs.length; i++) {
 				let getRetrn = 'return ' + window.viewHtml[i];
 				let getDataFun = 'getDataFun = function(){' +
-								dataString + getRetrn +
-							'};';
+					dataString + getRetrn +
+					'};';
 				eval(getDataFun);
 				ele_newJs[i].innerHTML = getDataFun();
 			}
@@ -176,7 +178,7 @@ function newJs() {
 							let setValue = 'window.runMoth ("' + value + '")';
 							ele_children[i].setAttribute(b, setValue);
 						}
-						if(a == '['){
+						if (a == '[') {
 							let returnData = 'return ' + value;
 							dataString = '';
 							for (var key in data) {
@@ -185,21 +187,88 @@ function newJs() {
 							dataString = dataString + "let dataS =" + JSON.stringify(data) + ';';
 							let getDataFun = 'getDataFun = function(){' +
 								dataString + returnData +
-							'};';
+								'};';
 							eval(getDataFun);
 							returnData = getDataFun();
-							ele_children[i].setAttribute(b.substring(0, b.length - 1).trim(),returnData);
+							switch (localName.substring(1, localName.length -1).trim()) {
+								case 'value':
+									ele_children[i].value = returnData;
+									break;
+								default:
+									break;
+							}
+						}
+					}
+				}
+			}
+		}
+		window.addEventListenerData = function() {
+			let ele_children = ele.children;
+			let data = window.newJs_bindCache_data;
+			let getDataFun = '';
+			for (let i = 0; i < ele_children.length; i++) {
+				if (ele_children[i].attributes.length > 0) {
+					for (let t = 0; t < ele_children[i].attributes.length; t++) {
+						let it = ele_children[i].attributes[t];
+						let localName = it.localName.toString(); //属性名
+						let value = it.value.toString(); //属性值
+						let a = localName.substring(0, 1).trim();
+						var b = localName.substring(1, localName.length).trim();
+						if (a == '[') {
+							let dataString = '';
+							for (var key in data) {
+								dataString = dataString + 'let ' + key + '=' + JSON.stringify(data[key]) + ';'
+							};
+							dataString = dataString + "let dataS =" + JSON.stringify(data) + ';';
+							let dataAttr = '""';
+							switch (localName.substring(1, localName.length -1).trim()) {
+								case 'value':
+									dataAttr = ele_children[i].value ? ('"' + ele_children[i].value + '"') : '""';
+									break;
+								default:
+									break;
+							}
+							let attr = value + '=' + dataAttr + ';';
+							let returnDataFun =
+								'returnDataFun = function(){' +
+								'try{' +
+								attr +
+								'}catch(e){ console.log(e) ' +
+								'}' +
+								'for(var key in dataS){' +
+								'dataS[key] = eval(key);' +
+								'};' +
+								'};returnDataFun(); return dataS;';
+							getDataFun = 'getDataFun = function(){' +
+								dataString +
+								returnDataFun +
+								'};';
+							eval(getDataFun);
+							window.newJs_bindCache_dataNext = getDataFun();
+							if (JSON.stringify(window.newJs_bindCache_dataNext) != '{}' && JSON.stringify(window.newJs_bindCache_dataNext) !=
+								JSON.stringify(window.newJs_bindCache_data)) {
+								return;
+							}
 						}
 					}
 				}
 			}
 		}
 		//设置页面数据监听
-		let timeNewJs = setInterval(function(){
-			if(JSON.stringify(window.newJs_bindCache_dataPro) != JSON.stringify(window.newJs_bindCache_data)){
+		let timeNewJs = setInterval(function() {
+			if (JSON.stringify(window.newJs_bindCache_dataPro) != JSON.stringify(window.newJs_bindCache_data)) {
 				window.newJs_bindCache_dataPro = window.newJs_bindCache_data;
+				if(JSON.stringify(window.newJs_bindCache_dataNext) != '{}' && JSON.stringify(window.newJs_bindCache_dataNext) !=
+					JSON.stringify(window.newJs_bindCache_data)) {
+					window.newJs_bindCache_dataNext = window.newJs_bindCache_data;
+				}
+				window.dataView();
+			} else if (JSON.stringify(window.newJs_bindCache_dataNext) != '{}' && JSON.stringify(window.newJs_bindCache_dataNext) !=
+				JSON.stringify(window.newJs_bindCache_data)) {
+				window.newJs_bindCache_data = window.newJs_bindCache_dataNext;
 				window.dataView();
 			}
+			window.addEventListenerData();
 		}, 50);
 	};
 }
