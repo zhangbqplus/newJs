@@ -39,3 +39,98 @@ console.log(newJs.$（"@.box1>p");
 
 数据及事件的绑定
 
+属性： 写法如下		以‘:’开始的属性内容为事件执行后返回内容，当出现多个返回值时首字符为$作为标识符
+
+```
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>newjS 事件封装库UI</title>
+		<script src="newJs/newJs_1.0.0.js"></script>
+	</head>
+	<body>
+		<div id="myApp" class="aaa" :value="ahfga">
+			<p @onclick="add()">{{c}}</p>
+			<p>3333
+				<div>{{a + a}} hfahfa</div>
+			</p>
+			<p>4444</p>
+			<div :class='c == 100 ? "red " : "block " '>
+				改变我的样式
+			</div>
+			<div :class='$ "red" : 100 > c && c > 10  , "green" : c > 100,'>
+			改变我的样式
+			</div>
+			<p @onclick="sub()" >{{a}}</p>
+			<p>{{b}}</p>
+			<p>{{a + b + c == c ? 'yes' : 'no'}}</p>
+			<p>{{c == 105 ? 999 : 212 }}</p>
+			<p>{{c == 10 ? 10000 : 222 }}</p>
+			<input type="" name="" [value]="c" />
+			<input type="" name="" [value]="c" />
+		</div>
+
+		<input id="aa" type="text" value="111" />
+		<input type="text" value='2222' />
+		<span id="bb">{{test}}</span>
+		<div class="aaa">
+			<p>5555</p>
+			<p>6666</p>
+			<p>7777</p>
+			<p>{{a}}</p>
+		</div>
+	</body>
+	<style>
+		.red{
+			color: red;
+		}
+		.block{
+			color: black;
+		}
+		.green{
+			color: green;
+		}
+	</style>
+	<script type="text/javascript">
+		var newjs = new newJs();
+		//数据流的绑定
+		newjs.bind({
+			id: 'myApp', //挂载点
+			data: { //数据
+				a: newjs.osInf()[0],
+				b: '1',
+				ddd: {
+					a: '1'
+				},
+				c: 10
+			},
+			// onloud: function() { //钩子1，进入即执行
+			// 	nihao();
+			// },
+			method: function() { //方法
+				function onloud() { //钩子1，进入即执行 （内部外部同时出现时，只执行内部的）
+					nihao();
+				}
+				function nihao() {
+					c = 100;
+				}
+				function aaa() {
+					c = c + 1;
+				}
+				function add() {
+					c = ++ c;
+					console.log(c);
+				}
+				function sub() {
+					c = -- c;
+					console.log(c);
+				}
+			},
+		});
+	</script>
+</html>
+
+```
+
