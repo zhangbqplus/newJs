@@ -6,12 +6,15 @@ function newJs() {
 			setInterval(fun, 50);
 		}
 	};
+	//判断数据类型
 	newJs.getType = function(i) {
 		return Object.prototype.toString.call(i).replace("]", "").slice(8).trim();
 	};
+	//是否存在构建函数
 	newJs.getTypeObj = function(k, t) {
 		return k instanceof t;
 	}
+	//获取节点id,或类   class .   id # 标签 < 获取选择器中第一个标签 $ 获取 选择器中的全部 @   不填时为name
 	newJs.$ = function(id) {
 		var a = id.trim().replace(/\s+/g, "");
 		var b = a.substring(0, 1).trim();
@@ -29,7 +32,24 @@ function newJs() {
 		} else {
 			return document.getElementsByName(k);
 		}
+		/*
+		  1、通过id获取,可以交给一个变量保存（括号里写id名）
+			 let a = document.getElementById("box");
+			 console.log(a);
+		  2、通过class获取（获取到的是数组）
+			 console.log(document.getElementsByClassName("1"));
+		  3、通过标签名获取（获取到的是数组）
+			 console.log(document.getElementsByTagName("div"));
+		  4、通过name属性获取（获取到的是数组）
+			 console.log(document.getElementsByName(2));
+			 html5获取节点方法
+		  1、获取到的是满足选择器的第一个标签（括号里写css选择器）
+			 console.log(document.querySelector(".box1>p"));
+		  2、获取到的是数组（括号里写css选择器）
+			 console.log(document.querySelectorAll(".box1>p"));
+			 */
 	};
+	//判断是电脑端还是手机端
 	newJs.pcMb = function() {
 		if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
 			return 'mb';
@@ -37,32 +57,47 @@ function newJs() {
 			return 'pc';
 		}
 	};
+	//获取屏幕的宽和高
 	newJs.screenH = function() {
 		return window.screen.height;
 	};
 	newJs.screenW = function() {
 		return window.screen.width;
 	};
+	//获取移动端信息
 	newJs.osInf = function() {
-		var device_type = navigator.userAgent; 
-		var md = new MobileDetect(device_type);
+		var device_type = navigator.userAgent; //获取userAgent信息
+		var md = new MobileDetect(device_type); //初始化mobile-detect
 		var arr = [
 			md.mobile(), md.phone(), md.tablet(), md.userAgent(), md.os(), md.is('iPhone'), md.is('bot'),
 			md.version('Webkit'), md.versionStr('Build'), md.match('playstation|xbox')
 		]
+		// console.log( md.mobile() );          // 'Sony'
+		// console.log( md.phone() );           // 'Sony'
+		// console.log( md.tablet() );          // null
+		// console.log( md.userAgent() );       // 'Safari'
+		// console.log( md.os() );              // 'AndroidOS'
+		// console.log( md.is('iPhone') );      // false
+		// console.log( md.is('bot') );         // false
+		// console.log( md.version('Webkit') );         // 534.3
+		// console.log( md.versionStr('Build') );       // '4.1.A.0.562'
+		// console.log( md.match('playstation|xbox') ); // false
+		// var os = md.os();//获取系统
 		return arr;
 	};
+	//数据的单向/双向绑定
 	newJs.bind = function(opt) {
 		var that = this;
 		let data = opt.data;
 		let method = opt.method;
 		let ele = document.getElementById(opt.id);
 		ele.innerHTML = ele.innerHTML.replace(/{{/g, '<newJs>').replace(/}}/g, '</newJs>');
-		let dataString = '';
+		let dataString = ''; //data字符串化
 		for (var key in data) {
 			dataString = dataString + 'let ' + key + '=' + JSON.stringify(data[key]) + ';'
 		};
 		dataString = dataString + "let dataS =" + JSON.stringify(data) + ';';
+		// console.log(opt.onloud);
 		let ifOnloud = '';
 		try{
 			opt.onloud.toString();
@@ -71,9 +106,9 @@ function newJs() {
 			ifOnloud = "function (){}";
 		}
 		let methodString = 'methodString = ' + method.toString().substring(0, method.toString().length - 1) +
-			'try{ onloud(); }' 
+			'try{ onloud(); }' //onloud 钩子容错,优先执行method的钩子,并且只执行一个
 			+
-			'catch(err){ let onloud = ' + ifOnloud + ';  onloud(); }' 
+			'catch(err){ let onloud = ' + ifOnloud + '; onloud(); }' //onloud 钩子被载入,并执行
 			+
 			method.toString().substring(method.toString().length - 1) + '; methodString();';
 		let returnDataFun =
@@ -85,14 +120,15 @@ function newJs() {
 		let funAll = 'funAll = function(){' + dataString + methodString + returnDataFun + '}';
 		eval(funAll);
 		data = funAll();
-		window.newJs_bindCache_data = data;
-		window.newJs_bindCache_dataPro = {};
-		window.newJs_bindCache_dataNext = {}; 
-		window.newJs_bindCache_method = method.toString(); 
-		window.runMoth = function(opt) { 
+		window.newJs_bindCache_data = data; //全局数据变量 (现在数据)
+		window.newJs_bindCache_dataPro = {}; //前置数据变量 (过去数据)
+		window.newJs_bindCache_dataNext = {}; //未来数据	(未来数据)
+		window.newJs_bindCache_method = method.toString(); //全局方法全局变量
+		//属性事件
+		window.runMoth = function(opt) { //全局触发事件
 			let data = window.newJs_bindCache_data;
 			let method = window.newJs_bindCache_method;
-			let dataString = ''; 
+			let dataString = ''; //data字符串化
 			for (var key in data) {
 				dataString = dataString + 'let ' + key + '=' + JSON.stringify(data[key]) + ';'
 			};
@@ -110,20 +146,20 @@ function newJs() {
 			let funAll = 'funAll = function(){' + dataString + methodString + returnDataFun + '}';
 			eval(funAll);
 			data = funAll();
-			window.newJs_bindCache_data = data; 
-			window.newJs_bindCache_dataNext = data; 
+			window.newJs_bindCache_data = data; //将数据存入全局变量
+			window.newJs_bindCache_dataNext = data; //预存未来数据
 		}
 		//存储视图innerHTML内数据
 		let ele_newJs = ele.getElementsByTagName('newJs');
-		window.viewHtml = [] ;
+		window.viewHtml = [] //试图数据结构存储
 		for (let i = 0; i < ele_newJs.length; i++) {
 			window.viewHtml[window.viewHtml.length] = ele_newJs[i].innerHTML;
 		}
 		//界面
-		window.dataView = function() { 
+		window.dataView = function() { //全局页面刷新事件
 			let data = window.newJs_bindCache_data;
 			let ele_newJs = ele.getElementsByTagName('newJs');
-			let dataString = ''; 
+			let dataString = ''; //data字符串化
 			for (var key in data) {
 				dataString = dataString + 'let ' + key + '=' + JSON.stringify(data[key]) + ';'
 			};
@@ -141,8 +177,8 @@ function newJs() {
 				if (ele_children[i].attributes.length > 0) {
 					for (let t = 0; t < ele_children[i].attributes.length; t++) {
 						let it = ele_children[i].attributes[t];
-						let localName = it.localName.toString().trim(); 
-						let value = it.value.toString().trim(); 
+						let localName = it.localName.toString().trim(); //属性名
+						let value = it.value.toString().trim(); //属性值
 						let a = localName.substring(0, 1).trim();
 						var b = localName.substring(1, localName.length).trim();
 						if (a == '@') {
@@ -154,6 +190,7 @@ function newJs() {
 							for (var key in data) {
 								dataString = dataString + 'let ' + key + '=' + JSON.stringify(data[key]) + ';'
 							};
+							//返回值处理
 							let getRetrn = '';
 							let getReturnValue = ''; 
 							if (value.substring(0, 1).trim() == '$') {
@@ -257,6 +294,7 @@ function newJs() {
 				}
 			}
 		}
+		//设置页面数据监听
 		let timeNewJs = setInterval(function() {
 			if (JSON.stringify(window.newJs_bindCache_dataPro) != JSON.stringify(window.newJs_bindCache_data)) {
 				window.newJs_bindCache_dataPro = window.newJs_bindCache_data;
@@ -274,6 +312,12 @@ function newJs() {
 		}, 50);
 	};
 }
+//获取手机系统信息  https://github.com/hgoebl/mobile-detect.js/
+// THIS FILE IS GENERATED - DO NOT EDIT!
+/*!mobile-detect v1.4.4 2019-09-21*/
+/*global module:false, define:false*/
+/*jshint latedef:false*/
+/*!@license Copyright 2013, Heinrich Goebl, License: MIT, see https://github.com/hgoebl/mobile-detect.js*/
 (function(define, undefined) {
 	define(function() {
 		'use strict';
@@ -563,6 +607,7 @@ function newJs() {
 			}
 		};
 
+		// following patterns come from http://detectmobilebrowsers.com/
 		impl.detectMobileBrowsers = {
 			fullPattern: /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i,
 			shortPattern: /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i,
@@ -636,11 +681,21 @@ function newJs() {
 			convertPropsToRegExp(mobileDetectRules.tablets);
 			convertPropsToRegExp(mobileDetectRules.uas);
 			convertPropsToRegExp(mobileDetectRules.utils);
+
+			// copy some patterns to oss0 which are tested first (see issue#15)
 			mobileDetectRules.oss0 = {
 				WindowsPhoneOS: mobileDetectRules.oss.WindowsPhoneOS,
 				WindowsMobileOS: mobileDetectRules.oss.WindowsMobileOS
 			};
 		}());
+
+		/**
+		 * Test userAgent string against a set of rules and find the first matched key.
+		 * @param {Object} rules (key is String, value is RegExp)
+		 * @param {String} userAgent the navigator.userAgent (or HTTP-Header 'User-Agent').
+		 * @returns {String|null} the matched key if found, otherwise <tt>null</tt>
+		 * @private
+		 */
 		impl.findMatch = function(rules, userAgent) {
 			for (var key in rules) {
 				if (hasOwnProp.call(rules, key)) {
@@ -651,6 +706,14 @@ function newJs() {
 			}
 			return null;
 		};
+
+		/**
+		 * Test userAgent string against a set of rules and return an array of matched keys.
+		 * @param {Object} rules (key is String, value is RegExp)
+		 * @param {String} userAgent the navigator.userAgent (or HTTP-Header 'User-Agent').
+		 * @returns {Array} an array of matched keys, may be empty when there is no match, but not <tt>null</tt>
+		 * @private
+		 */
 		impl.findMatches = function(rules, userAgent) {
 			var result = [];
 			for (var key in rules) {
@@ -662,6 +725,15 @@ function newJs() {
 			}
 			return result;
 		};
+
+		/**
+		 * Check the version of the given property in the User-Agent.
+		 *
+		 * @param {String} propertyName
+		 * @param {String} userAgent
+		 * @return {String} version or <tt>null</tt> if version not found
+		 * @private
+		 */
 		impl.getVersionStr = function(propertyName, userAgent) {
 			var props = impl.mobileDetectRules.props,
 				patterns, i, len, match;
@@ -677,10 +749,28 @@ function newJs() {
 			}
 			return null;
 		};
+
+		/**
+		 * Check the version of the given property in the User-Agent.
+		 * Will return a float number. (eg. 2_0 will return 2.0, 4.3.1 will return 4.31)
+		 *
+		 * @param {String} propertyName
+		 * @param {String} userAgent
+		 * @return {Number} version or <tt>NaN</tt> if version not found
+		 * @private
+		 */
 		impl.getVersion = function(propertyName, userAgent) {
 			var version = impl.getVersionStr(propertyName, userAgent);
 			return version ? impl.prepareVersionNo(version) : NaN;
 		};
+
+		/**
+		 * Prepare the version number.
+		 *
+		 * @param {String} version
+		 * @return {Number} the version number as a floating number
+		 * @private
+		 */
 		impl.prepareVersionNo = function(version) {
 			var numbers;
 
@@ -723,9 +813,10 @@ function newJs() {
 			if (phone) {
 				cache.mobile = cache.phone = phone;
 				cache.tablet = null;
-				return; 
+				return; // unambiguously identified as phone
 			}
 
+			// our rules haven't found a match -> try more general fallback rules
 			if (impl.isMobileFallback(userAgent)) {
 				phoneSized = MobileDetect.isPhoneSized(maxPhoneWidth);
 				if (phoneSized === undefined) {
@@ -742,54 +833,95 @@ function newJs() {
 				cache.mobile = cache.tablet = impl.FALLBACK_TABLET;
 				cache.phone = null;
 			} else {
+				// not mobile at all!
 				cache.mobile = cache.tablet = cache.phone = null;
 			}
 		};
 
+		// t is a reference to a MobileDetect instance
 		impl.mobileGrade = function(t) {
+			// impl note:
+			// To keep in sync w/ Mobile_Detect.php easily, the following code is tightly aligned to the PHP version.
+			// When changes are made in Mobile_Detect.php, copy this method and replace:
+			//     $this-> / t.
+			//     self::MOBILE_GRADE_(.) / '$1'
+			//     , self::VERSION_TYPE_FLOAT / (nothing)
+			//     isIOS() / os('iOS')
+			//     [reg] / (nothing)   <-- jsdelivr complaining about unescaped unicode character U+00AE
 			var $isMobile = t.mobile() !== null;
 
 			if (
+				// Apple iOS 3.2-5.1 - Tested on the original iPad (4.3 / 5.0), iPad 2 (4.3), iPad 3 (5.1), original iPhone (3.1), iPhone 3 (3.2), 3GS (4.3), 4 (4.3 / 5.0), and 4S (5.1)
 				t.os('iOS') && t.version('iPad') >= 4.3 ||
 				t.os('iOS') && t.version('iPhone') >= 3.1 ||
 				t.os('iOS') && t.version('iPod') >= 3.1 ||
+
+				// Android 2.1-2.3 - Tested on the HTC Incredible (2.2), original Droid (2.2), HTC Aria (2.1), Google Nexus S (2.3). Functional on 1.5 & 1.6 but performance may be sluggish, tested on Google G1 (1.5)
+				// Android 3.1 (Honeycomb)  - Tested on the Samsung Galaxy Tab 10.1 and Motorola XOOM
+				// Android 4.0 (ICS)  - Tested on a Galaxy Nexus. Note: transition performance can be poor on upgraded devices
+				// Android 4.1 (Jelly Bean)  - Tested on a Galaxy Nexus and Galaxy 7
 				(t.version('Android') > 2.1 && t.is('Webkit')) ||
 
+				// Windows Phone 7-7.5 - Tested on the HTC Surround (7.0) HTC Trophy (7.5), LG-E900 (7.5), Nokia Lumia 800
 				t.version('Windows Phone OS') >= 7.0 ||
 
+				// Blackberry 7 - Tested on BlackBerry Torch 9810
+				// Blackberry 6.0 - Tested on the Torch 9800 and Style 9670
 				t.is('BlackBerry') && t.version('BlackBerry') >= 6.0 ||
+				// Blackberry Playbook (1.0-2.0) - Tested on PlayBook
 				t.match('Playbook.*Tablet') ||
 
+				// Palm WebOS (1.4-2.0) - Tested on the Palm Pixi (1.4), Pre (1.4), Pre 2 (2.0)
 				(t.version('webOS') >= 1.4 && t.match('Palm|Pre|Pixi')) ||
+				// Palm WebOS 3.0  - Tested on HP TouchPad
 				t.match('hp.*TouchPad') ||
 
+				// Firefox Mobile (12 Beta) - Tested on Android 2.3 device
 				(t.is('Firefox') && t.version('Firefox') >= 12) ||
 
+				// Chrome for Android - Tested on Android 4.0, 4.1 device
 				(t.is('Chrome') && t.is('AndroidOS') && t.version('Android') >= 4.0) ||
+
+				// Skyfire 4.1 - Tested on Android 2.3 device
 				(t.is('Skyfire') && t.version('Skyfire') >= 4.1 && t.is('AndroidOS') && t.version('Android') >= 2.3) ||
 
+				// Opera Mobile 11.5-12: Tested on Android 2.3
 				(t.is('Opera') && t.version('Opera Mobi') > 11 && t.is('AndroidOS')) ||
 
+				// Meego 1.2 - Tested on Nokia 950 and N9
 				t.is('MeeGoOS') ||
 
+				// Tizen (pre-release) - Tested on early hardware
 				t.is('Tizen') ||
 
+				// Samsung Bada 2.0 - Tested on a Samsung Wave 3, Dolphin browser
+				// @todo: more tests here!
 				t.is('Dolfin') && t.version('Bada') >= 2.0 ||
 
+				// UC Browser - Tested on Android 2.3 device
 				((t.is('UC Browser') || t.is('Dolfin')) && t.version('Android') >= 2.3) ||
 
+				// Kindle 3 and Fire  - Tested on the built-in WebKit browser for each
 				(t.match('Kindle Fire') ||
 					t.is('Kindle') && t.version('Kindle') >= 3.0) ||
+
+				// Nook Color 1.4.1 - Tested on original Nook Color, not Nook Tablet
 				t.is('AndroidOS') && t.is('NookTablet') ||
 
+				// Chrome Desktop 11-21 - Tested on OS X 10.7 and Windows 7
 				t.version('Chrome') >= 11 && !$isMobile ||
 
+				// Safari Desktop 4-5 - Tested on OS X 10.7 and Windows 7
 				t.version('Safari') >= 5.0 && !$isMobile ||
 
+				// Firefox Desktop 4-13 - Tested on OS X 10.7 and Windows 7
 				t.version('Firefox') >= 4.0 && !$isMobile ||
 
+				// Internet Explorer 7-9 - Tested on Windows XP, Vista and 7
 				t.version('MSIE') >= 7.0 && !$isMobile ||
 
+				// Opera Desktop 10-12 - Tested on OS X 10.7 and Windows 7
+				// @reference: http://my.opera.com/community/openweb/idopera/
 				t.version('Opera') >= 10 && !$isMobile
 
 			) {
@@ -801,11 +933,14 @@ function newJs() {
 				t.os('iOS') && t.version('iPhone') < 3.1 ||
 				t.os('iOS') && t.version('iPod') < 3.1 ||
 
+				// Blackberry 5.0: Tested on the Storm 2 9550, Bold 9770
 				t.is('Blackberry') && t.version('BlackBerry') >= 5 && t.version('BlackBerry') < 6 ||
+
+				//Opera Mini (5.0-6.5) - Tested on iOS 3.2/4.3 and Android 2.3
 				(t.version('Opera Mini') >= 5.0 && t.version('Opera Mini') <= 6.5 &&
 					(t.version('Android') >= 2.3 || t.is('iOS'))) ||
 
-				
+				// Nokia Symbian^3 - Tested on Nokia N8 (Symbian^3), C7 (Symbian^3), also works on N97 (Symbian^1)
 				t.match('NokiaN8|NokiaC7|N97.*Series60|Symbian/3') ||
 
 				// @todo: report this (tested on Nokia N71)
@@ -815,13 +950,17 @@ function newJs() {
 			}
 
 			if (
+				// Blackberry 4.x - Tested on the Curve 8330
 				t.version('BlackBerry') < 5.0 ||
+				// Windows Mobile - Tested on the HTC Leo (WinMo 5.2)
 				t.match('MSIEMobile|Windows CE.*Mobile') || t.version('Windows Mobile') <= 5.2
 
 			) {
 				return 'C';
 			}
 
+			//All older smartphone platforms and featurephones - Any device that doesn't support media queries
+			//will receive the basic, C grade experience.
 			return 'C';
 		};
 
@@ -836,33 +975,189 @@ function newJs() {
 				window.screen.height;
 		};
 
+		/**
+		 * Constructor for MobileDetect object.
+		 * <br>
+		 * Such an object will keep a reference to the given user-agent string and cache most of the detect queries.<br>
+		 * <div style="background-color: #d9edf7; border: 1px solid #bce8f1; color: #3a87ad; padding: 14px; border-radius: 2px; margin-top: 20px">
+		 *     <strong>Find information how to download and install:</strong>
+		 *     <a href="https://github.com/hgoebl/mobile-detect.js/">github.com/hgoebl/mobile-detect.js/</a>
+		 * </div>
+		 *
+		 * @example <pre>
+		 *     var md = new MobileDetect(window.navigator.userAgent);
+		 *     if (md.mobile()) {
+		 *         location.href = (md.mobileGrade() === 'A') ? '/mobile/' : '/lynx/';
+		 *     }
+		 * </pre>
+		 *
+		 * @param {string} userAgent typically taken from window.navigator.userAgent or http_header['User-Agent']
+		 * @param {number} [maxPhoneWidth=600] <strong>only for browsers</strong> specify a value for the maximum
+		 *        width of smallest device side (in logical "CSS" pixels) until a device detected as mobile will be handled
+		 *        as phone.
+		 *        This is only used in cases where the device cannot be classified as phone or tablet.<br>
+		 *        See <a href="http://developer.android.com/guide/practices/screens_support.html">Declaring Tablet Layouts
+		 *        for Android</a>.<br>
+		 *        If you provide a value < 0, then this "fuzzy" check is disabled.
+		 * @constructor
+		 * @global
+		 */
 		function MobileDetect(userAgent, maxPhoneWidth) {
 			this.ua = prepareUserAgent(userAgent);
 			this._cache = {};
+			//600dp is typical 7" tablet minimum width
 			this.maxPhoneWidth = maxPhoneWidth || 600;
 		}
 
 		MobileDetect.prototype = {
 			constructor: MobileDetect,
+
+			/**
+			 * Returns the detected phone or tablet type or <tt>null</tt> if it is not a mobile device.
+			 * <br>
+			 * For a list of possible return values see {@link MobileDetect#phone} and {@link MobileDetect#tablet}.<br>
+			 * <br>
+			 * If the device is not detected by the regular expressions from Mobile-Detect, a test is made against
+			 * the patterns of <a href="http://detectmobilebrowsers.com/">detectmobilebrowsers.com</a>. If this test
+			 * is positive, a value of <code>UnknownPhone</code>, <code>UnknownTablet</code> or
+			 * <code>UnknownMobile</code> is returned.<br>
+			 * When used in browser, the decision whether phone or tablet is made based on <code>screen.width/height</code>.<br>
+			 * <br>
+			 * When used server-side (node.js), there is no way to tell the difference between <code>UnknownTablet</code>
+			 * and <code>UnknownMobile</code>, so you will get <code>UnknownMobile</code> here.<br>
+			 * Be aware that since v1.0.0 in this special case you will get <code>UnknownMobile</code> only for:
+			 * {@link MobileDetect#mobile}, not for {@link MobileDetect#phone} and {@link MobileDetect#tablet}.
+			 * In versions before v1.0.0 all 3 methods returned <code>UnknownMobile</code> which was tedious to use.
+			 * <br>
+			 * In most cases you will use the return value just as a boolean.
+			 *
+			 * @returns {String} the key for the phone family or tablet family, e.g. "Nexus".
+			 * @function MobileDetect#mobile
+			 */
 			mobile: function() {
 				impl.prepareDetectionCache(this._cache, this.ua, this.maxPhoneWidth);
 				return this._cache.mobile;
 			},
 
+			/**
+			 * Returns the detected phone type/family string or <tt>null</tt>.
+			 * <br>
+			 * The returned tablet (family or producer) is one of following keys:<br>
+			 * <br><tt>iPhone, BlackBerry, HTC, Nexus, Dell, Motorola, Samsung, LG, Sony, Asus,
+			 * NokiaLumia, Micromax, Palm, Vertu, Pantech, Fly, Wiko, iMobile, SimValley,
+			 * Wolfgang, Alcatel, Nintendo, Amoi, INQ, OnePlus, GenericPhone</tt><br>
+			 * <br>
+			 * If the device is not detected by the regular expressions from Mobile-Detect, a test is made against
+			 * the patterns of <a href="http://detectmobilebrowsers.com/">detectmobilebrowsers.com</a>. If this test
+			 * is positive, a value of <code>UnknownPhone</code> or <code>UnknownMobile</code> is returned.<br>
+			 * When used in browser, the decision whether phone or tablet is made based on <code>screen.width/height</code>.<br>
+			 * <br>
+			 * When used server-side (node.js), there is no way to tell the difference between <code>UnknownTablet</code>
+			 * and <code>UnknownMobile</code>, so you will get <code>null</code> here, while {@link MobileDetect#mobile}
+			 * will return <code>UnknownMobile</code>.<br>
+			 * Be aware that since v1.0.0 in this special case you will get <code>UnknownMobile</code> only for:
+			 * {@link MobileDetect#mobile}, not for {@link MobileDetect#phone} and {@link MobileDetect#tablet}.
+			 * In versions before v1.0.0 all 3 methods returned <code>UnknownMobile</code> which was tedious to use.
+			 * <br>
+			 * In most cases you will use the return value just as a boolean.
+			 *
+			 * @returns {String} the key of the phone family or producer, e.g. "iPhone"
+			 * @function MobileDetect#phone
+			 */
 			phone: function() {
 				impl.prepareDetectionCache(this._cache, this.ua, this.maxPhoneWidth);
 				return this._cache.phone;
 			},
+
+			/**
+			 * Returns the detected tablet type/family string or <tt>null</tt>.
+			 * <br>
+			 * The returned tablet (family or producer) is one of following keys:<br>
+			 * <br><tt>iPad, NexusTablet, GoogleTablet, SamsungTablet, Kindle, SurfaceTablet,
+			 * HPTablet, AsusTablet, BlackBerryTablet, HTCtablet, MotorolaTablet, NookTablet,
+			 * AcerTablet, ToshibaTablet, LGTablet, FujitsuTablet, PrestigioTablet,
+			 * LenovoTablet, DellTablet, YarvikTablet, MedionTablet, ArnovaTablet,
+			 * IntensoTablet, IRUTablet, MegafonTablet, EbodaTablet, AllViewTablet,
+			 * ArchosTablet, AinolTablet, NokiaLumiaTablet, SonyTablet, PhilipsTablet,
+			 * CubeTablet, CobyTablet, MIDTablet, MSITablet, SMiTTablet, RockChipTablet,
+			 * FlyTablet, bqTablet, HuaweiTablet, NecTablet, PantechTablet, BronchoTablet,
+			 * VersusTablet, ZyncTablet, PositivoTablet, NabiTablet, KoboTablet, DanewTablet,
+			 * TexetTablet, PlaystationTablet, TrekstorTablet, PyleAudioTablet, AdvanTablet,
+			 * DanyTechTablet, GalapadTablet, MicromaxTablet, KarbonnTablet, AllFineTablet,
+			 * PROSCANTablet, YONESTablet, ChangJiaTablet, GUTablet, PointOfViewTablet,
+			 * OvermaxTablet, HCLTablet, DPSTablet, VistureTablet, CrestaTablet,
+			 * MediatekTablet, ConcordeTablet, GoCleverTablet, ModecomTablet, VoninoTablet,
+			 * ECSTablet, StorexTablet, VodafoneTablet, EssentielBTablet, RossMoorTablet,
+			 * iMobileTablet, TolinoTablet, AudioSonicTablet, AMPETablet, SkkTablet,
+			 * TecnoTablet, JXDTablet, iJoyTablet, FX2Tablet, XoroTablet, ViewsonicTablet,
+			 * VerizonTablet, OdysTablet, CaptivaTablet, IconbitTablet, TeclastTablet,
+			 * OndaTablet, JaytechTablet, BlaupunktTablet, DigmaTablet, EvolioTablet,
+			 * LavaTablet, AocTablet, MpmanTablet, CelkonTablet, WolderTablet, MediacomTablet,
+			 * MiTablet, NibiruTablet, NexoTablet, LeaderTablet, UbislateTablet,
+			 * PocketBookTablet, KocasoTablet, HisenseTablet, Hudl, TelstraTablet,
+			 * GenericTablet</tt><br>
+			 * <br>
+			 * If the device is not detected by the regular expressions from Mobile-Detect, a test is made against
+			 * the patterns of <a href="http://detectmobilebrowsers.com/">detectmobilebrowsers.com</a>. If this test
+			 * is positive, a value of <code>UnknownTablet</code> or <code>UnknownMobile</code> is returned.<br>
+			 * When used in browser, the decision whether phone or tablet is made based on <code>screen.width/height</code>.<br>
+			 * <br>
+			 * When used server-side (node.js), there is no way to tell the difference between <code>UnknownTablet</code>
+			 * and <code>UnknownMobile</code>, so you will get <code>null</code> here, while {@link MobileDetect#mobile}
+			 * will return <code>UnknownMobile</code>.<br>
+			 * Be aware that since v1.0.0 in this special case you will get <code>UnknownMobile</code> only for:
+			 * {@link MobileDetect#mobile}, not for {@link MobileDetect#phone} and {@link MobileDetect#tablet}.
+			 * In versions before v1.0.0 all 3 methods returned <code>UnknownMobile</code> which was tedious to use.
+			 * <br>
+			 * In most cases you will use the return value just as a boolean.
+			 *
+			 * @returns {String} the key of the tablet family or producer, e.g. "SamsungTablet"
+			 * @function MobileDetect#tablet
+			 */
 			tablet: function() {
 				impl.prepareDetectionCache(this._cache, this.ua, this.maxPhoneWidth);
 				return this._cache.tablet;
 			},
+
+			/**
+			 * Returns the (first) detected user-agent string or <tt>null</tt>.
+			 * <br>
+			 * The returned user-agent is one of following keys:<br>
+			 * <br><tt>Chrome, Dolfin, Opera, Skyfire, Edge, IE, Firefox, Bolt, TeaShark, Blazer,
+			 * Safari, WeChat, UCBrowser, baiduboxapp, baidubrowser, DiigoBrowser, Mercury,
+			 * ObigoBrowser, NetFront, GenericBrowser, PaleMoon</tt><br>
+			 * <br>
+			 * In most cases calling {@link MobileDetect#userAgent} will be sufficient. But there are rare
+			 * cases where a mobile device pretends to be more than one particular browser. You can get the
+			 * list of all matches with {@link MobileDetect#userAgents} or check for a particular value by
+			 * providing one of the defined keys as first argument to {@link MobileDetect#is}.
+			 *
+			 * @returns {String} the key for the detected user-agent or <tt>null</tt>
+			 * @function MobileDetect#userAgent
+			 */
 			userAgent: function() {
 				if (this._cache.userAgent === undefined) {
 					this._cache.userAgent = impl.findMatch(impl.mobileDetectRules.uas, this.ua);
 				}
 				return this._cache.userAgent;
 			},
+
+			/**
+			 * Returns all detected user-agent strings.
+			 * <br>
+			 * The array is empty or contains one or more of following keys:<br>
+			 * <br><tt>Chrome, Dolfin, Opera, Skyfire, Edge, IE, Firefox, Bolt, TeaShark, Blazer,
+			 * Safari, WeChat, UCBrowser, baiduboxapp, baidubrowser, DiigoBrowser, Mercury,
+			 * ObigoBrowser, NetFront, GenericBrowser, PaleMoon</tt><br>
+			 * <br>
+			 * In most cases calling {@link MobileDetect#userAgent} will be sufficient. But there are rare
+			 * cases where a mobile device pretends to be more than one particular browser. You can get the
+			 * list of all matches with {@link MobileDetect#userAgents} or check for a particular value by
+			 * providing one of the defined keys as first argument to {@link MobileDetect#is}.
+			 *
+			 * @returns {Array} the array of detected user-agent keys or <tt>[]</tt>
+			 * @function MobileDetect#userAgents
+			 */
 			userAgents: function() {
 				if (this._cache.userAgents === undefined) {
 					this._cache.userAgents = impl.findMatches(impl.mobileDetectRules.uas, this.ua);
@@ -870,6 +1165,16 @@ function newJs() {
 				return this._cache.userAgents;
 			},
 
+			/**
+			 * Returns the detected operating system string or <tt>null</tt>.
+			 * <br>
+			 * The operating system is one of following keys:<br>
+			 * <br><tt>AndroidOS, BlackBerryOS, PalmOS, SymbianOS, WindowsMobileOS, WindowsPhoneOS,
+			 * iOS, iPadOS, MeeGoOS, MaemoOS, JavaOS, webOS, badaOS, BREWOS</tt><br>
+			 *
+			 * @returns {String} the key for the detected operating system.
+			 * @function MobileDetect#os
+			 */
 			os: function() {
 				if (this._cache.os === undefined) {
 					this._cache.os = impl.detectOS(this.ua);
@@ -877,14 +1182,63 @@ function newJs() {
 				return this._cache.os;
 			},
 
+			/**
+			 * Get the version (as Number) of the given property in the User-Agent.
+			 * <br>
+			 * Will return a float number. (eg. 2_0 will return 2.0, 4.3.1 will return 4.31)
+			 *
+			 * @param {String} key a key defining a thing which has a version.<br>
+			 *        You can use one of following keys:<br>
+			 * <br><tt>Mobile, Build, Version, VendorID, iPad, iPhone, iPod, Kindle, Chrome, Coast,
+			 * Dolfin, Firefox, Fennec, Edge, IE, NetFront, NokiaBrowser, Opera, Opera Mini,
+			 * Opera Mobi, UCBrowser, MQQBrowser, MicroMessenger, baiduboxapp, baidubrowser,
+			 * SamsungBrowser, Iron, Safari, Skyfire, Tizen, Webkit, PaleMoon, Gecko, Trident,
+			 * Presto, Goanna, iOS, Android, BlackBerry, BREW, Java, Windows Phone OS, Windows
+			 * Phone, Windows CE, Windows NT, Symbian, webOS</tt><br>
+			 *
+			 * @returns {Number} the version as float or <tt>NaN</tt> if User-Agent doesn't contain this version.
+			 *          Be careful when comparing this value with '==' operator!
+			 * @function MobileDetect#version
+			 */
 			version: function(key) {
 				return impl.getVersion(key, this.ua);
 			},
 
+			/**
+			 * Get the version (as String) of the given property in the User-Agent.
+			 * <br>
+			 *
+			 * @param {String} key a key defining a thing which has a version.<br>
+			 *        You can use one of following keys:<br>
+			 * <br><tt>Mobile, Build, Version, VendorID, iPad, iPhone, iPod, Kindle, Chrome, Coast,
+			 * Dolfin, Firefox, Fennec, Edge, IE, NetFront, NokiaBrowser, Opera, Opera Mini,
+			 * Opera Mobi, UCBrowser, MQQBrowser, MicroMessenger, baiduboxapp, baidubrowser,
+			 * SamsungBrowser, Iron, Safari, Skyfire, Tizen, Webkit, PaleMoon, Gecko, Trident,
+			 * Presto, Goanna, iOS, Android, BlackBerry, BREW, Java, Windows Phone OS, Windows
+			 * Phone, Windows CE, Windows NT, Symbian, webOS</tt><br>
+			 *
+			 * @returns {String} the "raw" version as String or <tt>null</tt> if User-Agent doesn't contain this version.
+			 *
+			 * @function MobileDetect#versionStr
+			 */
 			versionStr: function(key) {
 				return impl.getVersionStr(key, this.ua);
 			},
 
+			/**
+			 * Global test key against userAgent, os, phone, tablet and some other properties of userAgent string.
+			 *
+			 * @param {String} key the key (case-insensitive) of a userAgent, an operating system, phone or
+			 *        tablet family.<br>
+			 *        For a complete list of possible values, see {@link MobileDetect#userAgent},
+			 *        {@link MobileDetect#os}, {@link MobileDetect#phone}, {@link MobileDetect#tablet}.<br>
+			 *        Additionally you have following keys:<br>
+			 * <br><tt>Bot, MobileBot, DesktopMode, TV, WebKit, Console, Watch</tt><br>
+			 *
+			 * @returns {boolean} <tt>true</tt> when the given key is one of the defined keys of userAgent, os, phone,
+			 *                    tablet or one of the listed additional keys, otherwise <tt>false</tt>
+			 * @function MobileDetect#is
+			 */
 			is: function(key) {
 				return containsIC(this.userAgents(), key) ||
 					equalIC(key, this.os()) ||
@@ -893,6 +1247,14 @@ function newJs() {
 					containsIC(impl.findMatches(impl.mobileDetectRules.utils, this.ua), key);
 			},
 
+			/**
+			 * Do a quick test against navigator::userAgent.
+			 *
+			 * @param {String|RegExp} pattern the pattern, either as String or RegExp
+			 *                        (a string will be converted to a case-insensitive RegExp).
+			 * @returns {boolean} <tt>true</tt> when the pattern matches, otherwise <tt>false</tt>
+			 * @function MobileDetect#match
+			 */
 			match: function(pattern) {
 				if (!(pattern instanceof RegExp)) {
 					pattern = new RegExp(pattern, 'i');
@@ -900,10 +1262,26 @@ function newJs() {
 				return pattern.test(this.ua);
 			},
 
+			/**
+			 * Checks whether the mobile device can be considered as phone regarding <code>screen.width</code>.
+			 * <br>
+			 * Obviously this method makes sense in browser environments only (not for Node.js)!
+			 * @param {number} [maxPhoneWidth] the maximum logical pixels (aka. CSS-pixels) to be considered as phone.<br>
+			 *        The argument is optional and if not present or falsy, the value of the constructor is taken.
+			 * @returns {boolean|undefined} <code>undefined</code> if screen size wasn't detectable, else <code>true</code>
+			 *          when screen.width is less or equal to maxPhoneWidth, otherwise <code>false</code>.<br>
+			 *          Will always return <code>undefined</code> server-side.
+			 */
 			isPhoneSized: function(maxPhoneWidth) {
 				return MobileDetect.isPhoneSized(maxPhoneWidth || this.maxPhoneWidth);
 			},
 
+			/**
+			 * Returns the mobile grade ('A', 'B', 'C').
+			 *
+			 * @returns {String} one of the mobile grades ('A', 'B', 'C').
+			 * @function MobileDetect#mobileGrade
+			 */
 			mobileGrade: function() {
 				if (this._cache.grade === undefined) {
 					this._cache.grade = impl.mobileGrade(this);
@@ -912,6 +1290,7 @@ function newJs() {
 			}
 		};
 
+		// environment-dependent
 		if (typeof window !== 'undefined' && window.screen) {
 			MobileDetect.isPhoneSized = function(maxPhoneWidth) {
 				return maxPhoneWidth < 0 ? undefined : impl.getDeviceSmallerSide() <= maxPhoneWidth;
@@ -920,12 +1299,13 @@ function newJs() {
 			MobileDetect.isPhoneSized = function() {};
 		}
 
+		// should not be replaced by a completely new object - just overwrite existing methods
 		MobileDetect._impl = impl;
 
 		MobileDetect.version = '1.4.4 2019-09-21';
 
 		return MobileDetect;
-	}); 
+	}); // end of call of define()
 })((function(undefined) {
 	if (typeof module !== 'undefined' && module.exports) {
 		return function(factory) {
@@ -938,6 +1318,7 @@ function newJs() {
 			window.MobileDetect = factory();
 		};
 	} else {
+		// please file a bug if you get this error!
 		throw new Error('unknown environment');
 	}
 })());

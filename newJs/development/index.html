@@ -19,7 +19,7 @@
 			<div :class='$ "red" : 100 > c && c > 10  , "green" : c > 100,'>
 			改变我的样式
 			</div>
-			<p @onclick="sub()" >{{a}}</p>
+			<p @onclick="sub()" >rghffgfggfg{{a}}</p>
 			<p>{{b}}</p>
 			<p>{{a + b + c == c ? 'yes' : 'no'}}</p>
 			<p>{{c == 105 ? 999 : 212 }}</p>
@@ -51,30 +51,52 @@
 	</style>
 	<script type="text/javascript">
 		var newjs = new newJs();
+		var c = {
+			b: 1
+		}
+
+		function add() {
+			console.log(1111111111)
+		}
+		var obj = {};
+		Object.defineProperty(obj, 'test', {
+			set(val) {
+				document.querySelector('#aa').value = val;
+				document.querySelector('#bb').innerHTML = val;
+			}
+		})
+		console.log(document.querySelector('#aa'));
+		document.querySelector('#aa').onkeyup = function(e) {
+			obj.test = e.target.value;
+		}
+		// document.querySelector(Selector).attributes
 		//数据流的绑定
 		newjs.bind({
 			id: 'myApp', //挂载点
 			data: { //数据
 				a: newjs.osInf()[0],
-				b: '1',
+				b: c.b ? c.b : '1',
 				ddd: {
 					a: '1'
 				},
 				c: 10
 			},
-			// onloud: function() { //钩子1，进入即执行
+			// onloud: function() { //钩子1，计入即执行
 			// 	nihao();
 			// },
 			method: function() { //方法
-				function onloud() { //钩子1，进入即执行 （内部外部同时出现时，只执行内部的）
-					nihao();
-				}
+				// function onloud() { //钩子1，计入即执行
+
+				// }
+
 				function nihao() {
 					c = 100;
 				}
+
 				function aaa() {
 					c = c + 1;
 				}
+
 				function add() {
 					c = ++ c;
 					console.log(c);
@@ -84,6 +106,28 @@
 					console.log(c);
 				}
 			},
+		})
+		//定时器
+		newjs.timeIntervalDate(function() {
+			// newjs.bind(
+			// 	{
+			// 		id:'myApp',
+			// 		data:{
+			// 			a:newjs.osInf()[0],
+			// 			b:c.b ? c.b : '1',
+			// 			ddd:ddd
+			// 		},
+			// 		method:{
+			// 			a(){
+			// 				console.log(1111);
+			// 			},
+			// 		}
+			// 	}
+			// )
 		});
+		console.log(newjs);
+		console.log(newjs.$("#myApp").children); //获取节点 attributes
+		console.log(newjs.$(".aaa")[0].attributes); //获取节点 attributes
+		console.log(newjs.osInf()); //系统信息
 	</script>
 </html>
