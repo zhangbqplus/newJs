@@ -8,6 +8,9 @@
 	</head>
 	<body>
 		<div id="myApp" class="aaa" :value="ahfga">
+			<p class="dddd">屏幕的高度{{h}}</p>
+			<p>屏幕的宽度{{w}}</p>
+			<p>当前所在设备{{ pcMb == 'pc' ? '电脑端' : '移动端' }}</p>
 			<p @onclick="alertThis()">{{c}}</p>
 			<p>3333
 				<div>{{a + a}} hfahfa</div>
@@ -33,13 +36,17 @@
 		<input type="text" value='2222' />
 		<span id="bb">{{test}}</span>
 		<div class="aaa">
-			<p>5555</p>
+			<p id="aaa">5555</p>
 			<p>6666</p>
 			<p>7777</p>
 			<p>{{a}}</p>
 		</div>
 	</body>
 	<style>
+		#aaa + p{
+			color: #008000;
+			background: #FF0000;
+		}
 		.red{
 			color: red;
 		}
@@ -56,6 +63,9 @@
 		newjs.bind({
 			id: 'myApp', //挂载点
 			data: { //数据
+				h:newjs.screenH(),
+				w:newjs.screenW(),
+				pcMb:newjs.pcMb(),
 				a: newjs.osInf()[0],
 				b: '1',
 				ddd: {
@@ -72,7 +82,6 @@
 			method: function() { //方法
 				function onloud() { //钩子1，进入即执行 （内部外部同时出现时，只执行内部的）
 					nihao();
-					alertThis();
 				}
 				function nihao() {
 					c = 100;

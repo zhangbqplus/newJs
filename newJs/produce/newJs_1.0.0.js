@@ -162,9 +162,9 @@ function newJs() {
 									getReturnValue = 'let dataS = "" ; ';
 									for (var z = 0; z < valueArry.length; z++) {
 										if (valueArry[z].trim().length > 0 && valueArry[z].split(':').length > 1) {
-											getReturnValue = getReturnValue 
+											getReturnValue = getReturnValue
 											+ 'if('+ valueArry[z].split(':')[1] +'){'
-											+ 'dataS = dataS + " " + ' + valueArry[z].split(':')[0]
+											+ 'dataS = dataS + " " + ' + valueArry[z].split(':')[0].replace(/=/g,":")
 											+ '}';
 										}else if(valueArry[z].split(':') == 1){
 											getReturnValue = getReturnValue + 'dataS = dataS + " " + ' + valueArry[z].split(':')[0];

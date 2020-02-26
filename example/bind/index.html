@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>newjS 事件封装库UI</title>
+		<script src="../../newJs/produce/newJs_1.0.0.js"></script>
+	</head>
+	<body>
+		<div>
+			<div>数据绑定用法及原理</div>
+			<ol>
+				<li>
+					标签内所有通过大括号{{}}包在内的,都会以retun 的形式返回。
+					即每个{{}}，相当于一个函数，return 回来的就是{{}}内的内容
+				</li>
+				<li>
+					所有以:开始的属性内容都会以return的形式返回。
+					即每一个:的属性也是一个函数，ruturn回来的就是属性的内容。
+				</li>
+				<li>
+					所有以[]包裹的属性为数据双向绑定内容，无论是无论改变那个地方，只要变量改变
+					所有涉及该变量的都会改变。注意：该属性只支持某个单变量，不支持属性内计算
+				</li>
+				<li>
+					所有以:开始的属性，属性中第一个参数设置了$ 则该属性内容被判定为多个函数，
+					即每个以,隔开的内容都是一个函数，返回来的函数值用空格隔开，字符串中出现=时编译解析为：
+				</li>
+				<li>
+					所有以@开始的属性，会认为这是一个触发事件，该内容会找到method中找到对应事件，
+					并执行相应内容。注意：method 内事件智慧调用内部的事件。
+				</li>
+				<li>
+					method 中 onloud事件是进入即执行事件，其他事件只有被触发时才会执行
+				</li>
+				<li>
+					data 为绑定数据
+				</li>
+				<li>
+					id 该绑定只会执行该id内部的内容
+				</li>
+			</ol>
+		</div>
+		<div id="myApp" class="aaa" :value="ahfga">
+			<p class="dddd">屏幕的高度{{h}}</p>
+			<p>屏幕的宽度{{w}}</p>
+			<p>当前所在设备{{ pcMb == 'pc' ? '电脑端' : '移动端' }}</p>
+			<p @onclick="alertThisa('我是调用内部事件打印的')">{{p1}}</p>
+			<p @onclick="alertThis('点击我触发alert')">{{p1}}</p>
+			<p @onclick="alertThis(h)">{{p1}}</p>
+			<p @onclick="alertThis(p2.a)">{{p2.a}}</p>
+			<p>
+				<div>宽 + 高 = {{h + w}},<br /> 宽 ➗ 高 = {{ w / h}},</div>
+				<div>宽 % 高 = {{w % h}},<br /> 宽 ➗ （高/3） 保留整数 {{ parseInt(w/(h/3))}},</div>
+			</p>
+			<div :class='p3.a == "red" ? "red " : "block" '>
+				通过计算改变class
+			</div>
+			<div :class='$ "red" : p3.a == "red" && p3.b == 3 , "greenBg" : p3.b > 1'>
+				通过计算改变多个class
+			</div>
+			<div :style='"color:" + (p3.a == "red" ? "red " : "block")'>
+				改变我的样式
+			</div>
+			<div :style='"color:" + (p3.a == "red" ? "red " : "block") + ";" + "background-color: #008000;"'>
+				改变我的多个样式方法1
+			</div>
+			<div :style='$ "color = green;" : p3.a == "red" , "background-color = #000;" : p3.a == "red" '>
+				改变我的多个样式方法2
+			</div>
+			<p>我是输出的下面内容：{{c}}</p>
+			<input type="" name="" [value]="c" />
+			<p @onclick= "ccc(Math.random())">点击我上面的内容将产生随机数替换上面内容变化</p>
+		</div>
+	</body>
+	<style>
+		#aaa + p{
+			color: #008000;
+			background: #FF0000;
+		}
+		.red{
+			color: red;
+		}
+		.block{
+			color: black;
+		}
+		.green{
+			color: green;
+		}
+		.greenBg{
+			background-color: #008000;
+		}
+	</style>
+	<script type="text/javascript">
+		var newjs = new newJs();
+		function a(opt){
+			alert(opt)
+		}
+		//数据流的绑定
+		newjs.bind({
+			id: 'myApp', //挂载点
+			data: { //数据
+				h:newjs.screenH(),//屏幕得高度
+				w:newjs.screenW(),//屏幕得宽度
+				pcMb:newjs.pcMb(),//当前设备
+				a: newjs.osInf()[0],
+				p1:'点击我触发alert',
+				p2:{
+					a:'我是p2对象'
+				},
+				p3:{
+					a:'red',
+					b:3
+				},
+				b: '1',
+				ddd: {
+					a: '1'
+				},
+				c: 10,
+				ee:{
+					a:1000
+				}
+			},
+			onloud: function() { //钩子1，进入即执行
+				console.log("进入即执行2!");
+			},
+			method: function() { //方法
+				function onloud() { //钩子1，进入即执行 （内部外部同时出现时，只执行内部的）
+					console.log("进入即执行");
+				}
+				function ccc(opt){
+					c = opt;
+				}
+				function alertThis(opt){
+					alert(opt);
+				}
+				function alertThisa(opt){
+					alertThis(opt);
+				}
+			},
+		});
+	</script>
+</html>

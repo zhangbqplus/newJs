@@ -6,6 +6,44 @@ function newJs() {
 			setInterval(fun, 50);
 		}
 	};
+	//监听浏览器窗口是否发生了变化,未发生变化
+	newJs.onresize = function() {
+		let screenH = window.screen.height;
+		let screenW = window.screen.width;
+		let returnState = false;
+		window.onresize = function() {
+		   if(screenH != window.screen.height || screenW != window.screen.width){
+			   returnState = true;
+		   }else{
+			   returnState = false;
+		   }
+		}
+		setInterval(function() {
+			if(returnState){
+				return 
+			}
+		})
+		window.addEventListener('resize', function() {
+		    // 变化后需要做的事
+			returnState = true;
+			console.log(returnState);
+		})
+		return returnState;
+	}
+	// newJs.onresize = function(f) {
+	// 	let screenH = window.screen.height;
+	// 	let screenW = window.screen.width;
+	// 	let returnState = false;
+	// 	window.onresize = function() {
+	// 	   if(screenH != window.screen.height){
+	// 		   returnState = true;
+	// 	   }
+	// 	   if(screenW != window.screen.width){
+	// 		   returnState = true;
+	// 	   }
+	// 	}
+	// 	return returnState;
+	// }
 	//判断数据类型
 	newJs.getType = function(i) {
 		return Object.prototype.toString.call(i).replace("]", "").slice(8).trim();
@@ -201,7 +239,7 @@ function newJs() {
 										if (valueArry[z].trim().length > 0 && valueArry[z].split(':').length > 1) {
 											getReturnValue = getReturnValue 
 											+ 'if('+ valueArry[z].split(':')[1] +'){'
-											+ 'dataS = dataS + " " + ' + valueArry[z].split(':')[0]
+											+ 'dataS = dataS + " " + ' + valueArry[z].split(':')[0].replace(/=/g,":")
 											+ '}';
 										}else if(valueArry[z].split(':') == 1){
 											getReturnValue = getReturnValue + 'dataS = dataS + " " + ' + valueArry[z].split(':')[0];
@@ -216,7 +254,7 @@ function newJs() {
 								dataString + getReturnValue + getRetrn +
 								'};';
 								eval(getDataFun);
-							ele_children[i].setAttribute(b, getDataFun());
+								ele_children[i].setAttribute(b, getDataFun());
 						}
 						if (a == '[') {
 							let returnData = 'return ' + value;
