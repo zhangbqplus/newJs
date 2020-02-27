@@ -1,0 +1,10 @@
+{
+  "name": "newJs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./index.html"
+  },
+  "dependencies": {
+  }
+}

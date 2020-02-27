@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>newjS 事件封装库UI</title>
+		<script src="../../newJs/produce/newJs_1.0.0.js"></script>
+	</head>
+	<body>
+		<div>
+			<div>获取手机信息</div>
+			<ol id="myApp">
+			</ol>
+		</div>
+	</body>
+	<style>
+	</style>
+	<script type="text/javascript">
+		var newJs = new newJs();
+		console.log(newJs.getType(newJs.osInf()));
+		function getOsInf(){
+			let a = '';
+			for (var i = 0; i < newJs.osInf().length; i++) {
+				a = a + "<li>" + newJs.osInf()[i] + "</li>"
+			}
+			newJs.$('#myApp').innerHTML =  a;
+		}
+		getOsInf();
+	</script>
+</html>

@@ -11,7 +11,7 @@ var newJs = new newJs();
 class .   id # 标签 < 获取选择器中第一个标签 $ 获取 选择器中的全部 @   不填时为name
 
 ```
-console.log(newJs.$（"#id");
+console.log(newJs.$（"#id"));
 console.log(newJs.$（".class");
 console.log(newJs.$（"<标签名");
 console.log(newJs.$（"name");
